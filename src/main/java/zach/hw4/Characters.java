@@ -134,7 +134,7 @@ public class Characters {
 
 			statement.execute(insert.toString());
 			response.status(201);
-			response.header("Location", request.uri() + "/" + id); 
+			response.header("Location", request.url() + "/" + id); 
 		} catch(SQLException ex) {
 			ex.printStackTrace();
 			response.status(500);
