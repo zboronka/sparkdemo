@@ -1,5 +1,6 @@
 package zach.hw4;
 
+import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -29,6 +30,8 @@ public class Characters {
 			ResultSet rs;
 
 			rs = statement.executeQuery(select);
+			ArrayList<CharURL> chars = new ArrayList<>();
+			String url = request.url();
 			while(rs.next()) {
 				Char c = new Char(rs.getString("Name"),
 					    rs.getInt(stat_names[0]),
@@ -37,8 +40,10 @@ public class Characters {
 					    rs.getInt(stat_names[3]),
 					    rs.getInt(stat_names[4]),
 					    rs.getInt(stat_names[5]));
-				body += om.writeValueAsString(c);
+				chars.add(new CharURL(c.name, url + "/" + rs.getInt("ID"))); 
 			}
+
+			body += om.writeValueAsString(chars);
 		} catch(SQLException ex) {
 			ex.printStackTrace();
 			response.status(500);
@@ -79,7 +84,7 @@ public class Characters {
 					    rs.getInt(stat_names[3]),
 					    rs.getInt(stat_names[4]),
 					    rs.getInt(stat_names[5]));
-				return om.writeValueAsString(c);
+				body = om.writeValueAsString(c);
 			}
 		} catch(SQLException ex) {
 			ex.printStackTrace();
@@ -106,6 +111,7 @@ public class Characters {
 			String name = request.queryParams("name");
 			if(name == null) {
 				response.status(400);
+				disconnectDB(conn);
 				return "Name required";
 			}
 
